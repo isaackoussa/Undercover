@@ -3,8 +3,7 @@
 Jeu d'ambiance en français, sur un seul téléphone qu'on se passe : trouvez qui n'a pas le même mot que vous.
 
 - **563 paires de mots** tirées au hasard (17 thèmes mélangés, jamais affichés aux joueurs)
-- Rôles : civils, infiltrés (mot proche) et amnésiques (pas de mot, peuvent gagner seuls en devinant le mot des civils)
-- De 3 à 12 joueurs, chacun reçoit son mot en secret, nombre de rôles réglable
+- Rôles tirés au hasard : civils, infiltrés (mot proche) et amnésiques (pas de mot, peuvent gagner seuls en devinant le mot des civils). Le nombre d'imposteurs dépend du nombre de joueurs
 - Ajout de vos propres paires de mots
 - Pas de répétition des paires tant que tout le stock n'a pas été joué
 - Scores cumulés, règles intégrées

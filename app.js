@@ -13,7 +13,7 @@ const ROLE = {
   blanc:    { label:"Amnésique", emoji:"👻" }
 };
 
-let settings = store.get("settings", { names: [], infiltres: 1, blancs: 0 });
+let settings = store.get("settings", { names: [] });
 settings.names = settings.names.slice(0, 12);
 let scores = store.get("scores", {});
 let used = store.get("used", []);
@@ -49,24 +49,27 @@ const closeModal = () => { $("#modal").hidden = true; };
 
 /* ---------- Configuration ---------- */
 function save(){ store.set("settings", settings); }
-function clampRoles(){
-  const n = settings.names.length;
-  const maxImp = Math.max(1, Math.floor((n - 1) / 2));
-  settings.infiltres = Math.max(settings.blancs > 0 ? 0 : 1, Math.min(settings.infiltres, maxImp));
-  settings.blancs = Math.max(0, Math.min(settings.blancs, maxImp - settings.infiltres));
-  if(settings.infiltres + settings.blancs === 0) settings.infiltres = 1;
+// Nombre total d'imposteurs selon le nombre de joueurs (3 → 12).
+const IMPOSTORS = { 3:1, 4:1, 5:2, 6:2, 7:2, 8:3, 9:3, 10:3, 11:4, 12:4 };
+const impostorCount = n => IMPOSTORS[Math.min(Math.max(n, 3), 12)];
+// Répartition aléatoire : au moins 1 infiltré, jusqu'à la moitié d'amnésiques.
+function randomRoles(n){
+  const total = impostorCount(n);
+  const blancs = total < 2 ? 0 : Math.floor(Math.random() * (Math.floor(total / 2) + 1));
+  return shuffle([
+    ...Array(total - blancs).fill("infiltre"),
+    ...Array(blancs).fill("blanc"),
+    ...Array(n - total).fill("civil")
+  ]);
 }
 function renderSetup(){
-  clampRoles();
   const n = settings.names.length;
   $("#player-count").textContent = `${n} / ${MAX_PLAYERS}`;
   $("#player-list").innerHTML = settings.names.map((p,i) =>
     `<li>${esc(p)}<button data-del="${i}" aria-label="Retirer">✕</button></li>`).join("");
-  $("#val-infiltres").textContent = settings.infiltres;
-  $("#val-blancs").textContent = settings.blancs;
-  const civ = n - settings.infiltres - settings.blancs;
+  const imp = impostorCount(n);
   $("#role-summary").textContent = n >= 3
-    ? `${civ} civil${civ>1?"s":""} · ${settings.infiltres} infiltré${settings.infiltres>1?"s":""} · ${settings.blancs} amnésique${settings.blancs>1?"s":""}`
+    ? `${n - imp} civils · ${imp} imposteur${imp>1?"s cachés":" caché"}`
     : "Ajoute au moins 3 joueurs.";
 
   $("#custom-words").value = store.get("custom", []).map(p => p.join(" / ")).join("\n");
@@ -89,15 +92,6 @@ $("#player-list").addEventListener("click", e => {
   const i = e.target.dataset.del;
   if(i !== undefined){ settings.names.splice(+i, 1); renderSetup(); }
 });
-document.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
-  const k = b.dataset.step, d = +b.dataset.d;
-  const n = settings.names.length, maxImp = Math.max(1, Math.floor((n - 1) / 2));
-  const other = k === "infiltres" ? settings.blancs : settings.infiltres;
-  const next = settings[k] + d;
-  if(next < 0 || next + other > maxImp || next + other < 1) return;
-  settings[k] = next;
-  renderSetup();
-}));
 $("#save-custom").onclick = () => {
   const pairs = $("#custom-words").value.split("\n")
     .map(l => l.split("/").map(s => s.trim()).filter(Boolean))
@@ -129,11 +123,7 @@ function startGame(){
   if(n < 3){ $("#setup-error").textContent = "Il faut au moins 3 joueurs."; return; }
   const pair = pickPair();
   $("#setup-error").textContent = "";
-  const roles = shuffle([
-    ...Array(settings.infiltres).fill("infiltre"),
-    ...Array(settings.blancs).fill("blanc"),
-    ...Array(n - settings.infiltres - settings.blancs).fill("civil")
-  ]);
+  const roles = randomRoles(n);
   game = {
     ...pair, round: 1, dealIndex: 0,
     players: settings.names.map((name, i) => ({
