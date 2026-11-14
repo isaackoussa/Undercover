@@ -1,4 +1,4 @@
-const CACHE='infiltre-v1';
+const CACHE='infiltre-v2';
 const FILES=['./','index.html','style.css','app.js','words.js','manifest.json','icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));

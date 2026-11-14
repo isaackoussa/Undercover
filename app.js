@@ -13,7 +13,8 @@ const ROLE = {
   blanc:    { label:"Amnésique", emoji:"👻" }
 };
 
-let settings = store.get("settings", { names: [], infiltres: 1, blancs: 0, cats: null });
+let settings = store.get("settings", { names: [], infiltres: 1, blancs: 0 });
+settings.names = settings.names.slice(0, 12);
 let scores = store.get("scores", {});
 let used = store.get("used", []);
 let game = null;
@@ -23,11 +24,9 @@ function allCategories(){
   const custom = store.get("custom", []);
   return custom.length ? { ...CATEGORIES, [CUSTOM]: custom } : CATEGORIES;
 }
-function selectedCats(){
-  const all = Object.keys(allCategories());
-  if(!settings.cats) settings.cats = Object.keys(CATEGORIES).filter(c => !c.includes("adultes"));
-  return settings.cats.filter(c => all.includes(c));
-}
+// Tous les thèmes sont utilisés, tirés au hasard et jamais affichés.
+const selectedCats = () => Object.keys(allCategories());
+const MAX_PLAYERS = 12;
 
 /* ---------- Écrans ---------- */
 function show(id){
@@ -60,7 +59,7 @@ function clampRoles(){
 function renderSetup(){
   clampRoles();
   const n = settings.names.length;
-  $("#player-count").textContent = n;
+  $("#player-count").textContent = `${n} / ${MAX_PLAYERS}`;
   $("#player-list").innerHTML = settings.names.map((p,i) =>
     `<li>${esc(p)}<button data-del="${i}" aria-label="Retirer">✕</button></li>`).join("");
   $("#val-infiltres").textContent = settings.infiltres;
@@ -70,10 +69,6 @@ function renderSetup(){
     ? `${civ} civil${civ>1?"s":""} · ${settings.infiltres} infiltré${settings.infiltres>1?"s":""} · ${settings.blancs} amnésique${settings.blancs>1?"s":""}`
     : "Ajoute au moins 3 joueurs.";
 
-  const cats = allCategories(), sel = selectedCats();
-  $("#cat-list").innerHTML = Object.entries(cats).map(([c, list]) =>
-    `<button class="cat ${sel.includes(c)?"on":""}" data-cat="${esc(c)}"><span>${esc(c)}</span><small>${list.length}</small></button>`).join("");
-  $("#pair-count").textContent = sel.reduce((t,c) => t + cats[c].length, 0) + " paires";
   $("#custom-words").value = store.get("custom", []).map(p => p.join(" / ")).join("\n");
   save();
 }
@@ -84,7 +79,7 @@ $("#add-player-form").addEventListener("submit", e => {
   $("#setup-error").textContent = "";
   if(!name) return;
   if(settings.names.some(n => n.toLowerCase() === name.toLowerCase())){ $("#setup-error").textContent = "Ce prénom existe déjà."; return; }
-  if(settings.names.length >= 20){ $("#setup-error").textContent = "20 joueurs maximum."; return; }
+  if(settings.names.length >= MAX_PLAYERS){ $("#setup-error").textContent = `${MAX_PLAYERS} joueurs maximum.`; return; }
   settings.names.push(name);
   $("#player-input").value = "";
   $("#player-input").focus();
@@ -103,20 +98,11 @@ document.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click"
   settings[k] = next;
   renderSetup();
 }));
-$("#cat-list").addEventListener("click", e => {
-  const b = e.target.closest("[data-cat]"); if(!b) return;
-  const c = b.dataset.cat, sel = selectedCats();
-  settings.cats = sel.includes(c) ? sel.filter(x => x !== c) : [...sel, c];
-  renderSetup();
-});
-$("#cat-all").onclick = () => { settings.cats = Object.keys(allCategories()); renderSetup(); };
-$("#cat-none").onclick = () => { settings.cats = []; renderSetup(); };
 $("#save-custom").onclick = () => {
   const pairs = $("#custom-words").value.split("\n")
     .map(l => l.split("/").map(s => s.trim()).filter(Boolean))
     .filter(p => p.length === 2 && p[0].toLowerCase() !== p[1].toLowerCase());
   store.set("custom", pairs);
-  if(pairs.length && !selectedCats().includes(CUSTOM)) settings.cats = [...selectedCats(), CUSTOM];
   $("#custom-status").textContent = ` ${pairs.length} paire${pairs.length>1?"s":""} enregistrée${pairs.length>1?"s":""}`;
   renderSetup();
 };
@@ -142,7 +128,6 @@ function startGame(){
   const n = settings.names.length;
   if(n < 3){ $("#setup-error").textContent = "Il faut au moins 3 joueurs."; return; }
   const pair = pickPair();
-  if(!pair){ $("#setup-error").textContent = "Choisis au moins un thème."; return; }
   $("#setup-error").textContent = "";
   const roles = shuffle([
     ...Array(settings.infiltres).fill("infiltre"),
@@ -284,7 +269,7 @@ function endGame(winner, blancWinner){
     null: ["Partie abandonnée", "Voici ce qui se cachait…"]
   }[winner];
   $("#end-title").textContent = t[0];
-  $("#end-sub").textContent = t[1] + ` (Thème : ${game.cat})`;
+  $("#end-sub").textContent = t[1];
   $("#end-civil").textContent = game.civil;
   $("#end-infiltre").textContent = game.infiltre;
   $("#end-roles").innerHTML = game.players.map(p =>
