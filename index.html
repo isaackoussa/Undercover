@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14111f">
+<title>Infiltré</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+
+  <!-- ACCUEIL / CONFIGURATION -->
+  <section id="screen-setup" class="screen active">
+    <header class="hero">
+      <h1>🕵️ <span class="brand">Infiltré</span></h1>
+      <p class="sub">Trouvez qui n'a pas le même mot que vous.</p>
+    </header>
+
+    <div class="card">
+      <h2>Joueurs <span id="player-count" class="pill">0</span></h2>
+      <form id="add-player-form" class="row">
+        <input id="player-input" type="text" maxlength="20" placeholder="Prénom du joueur" autocomplete="off">
+        <button type="submit" class="btn small">Ajouter</button>
+      </form>
+      <ul id="player-list" class="chips"></ul>
+    </div>
+
+    <div class="card">
+      <h2>Rôles</h2>
+      <div class="stepper-row">
+        <div><strong>🕵️ Infiltrés</strong><small>Ont un mot proche</small></div>
+        <div class="stepper"><button data-step="infiltres" data-d="-1">−</button><span id="val-infiltres">1</span><button data-step="infiltres" data-d="1">+</button></div>
+      </div>
+      <div class="stepper-row">
+        <div><strong>👻 Amnésiques</strong><small>N'ont aucun mot</small></div>
+        <div class="stepper"><button data-step="blancs" data-d="-1">−</button><span id="val-blancs">0</span><button data-step="blancs" data-d="1">+</button></div>
+      </div>
+      <p id="role-summary" class="muted"></p>
+    </div>
+
+    <div class="card">
+      <h2>Thèmes <span id="pair-count" class="pill">0</span></h2>
+      <div class="row gap">
+        <button id="cat-all" class="btn ghost small">Tout</button>
+        <button id="cat-none" class="btn ghost small">Aucun</button>
+      </div>
+      <div id="cat-list" class="cats"></div>
+      <details class="custom">
+        <summary>✏️ Ajouter mes propres mots</summary>
+        <p class="muted">Une paire par ligne, séparée par « / ». Ex : <em>Chocolat / Vanille</em></p>
+        <textarea id="custom-words" rows="5" placeholder="Chocolat / Vanille&#10;Plage / Piscine"></textarea>
+        <button id="save-custom" class="btn small">Enregistrer</button>
+        <span id="custom-status" class="muted"></span>
+      </details>
+    </div>
+
+    <p id="setup-error" class="error"></p>
+    <button id="start-btn" class="btn big">Lancer la partie</button>
+    <button id="rules-btn" class="btn ghost">📖 Règles du jeu</button>
+    <button id="scores-btn" class="btn ghost">🏆 Scores</button>
+  </section>
+
+  <!-- DISTRIBUTION DES MOTS -->
+  <section id="screen-deal" class="screen">
+    <p class="muted center" id="deal-progress"></p>
+    <div class="deal-box">
+      <div id="deal-hidden">
+        <p class="pass">Passe le téléphone à</p>
+        <h1 id="deal-name"></h1>
+        <button id="reveal-btn" class="btn big">👀 Voir mon mot</button>
+      </div>
+      <div id="deal-shown" hidden>
+        <p class="pass" id="deal-label">Ton mot est</p>
+        <div id="deal-word" class="word"></div>
+        <p class="muted" id="deal-hint"></p>
+        <button id="hide-btn" class="btn big">J'ai mémorisé ✅</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTIE -->
+  <section id="screen-game" class="screen">
+    <header class="hero small-hero">
+      <h2>Tour <span id="round-num">1</span></h2>
+      <p class="sub" id="starter"></p>
+    </header>
+    <div class="card">
+      <p class="muted">Chacun dit <strong>un mot</strong> pour décrire son mot secret, dans l'ordre. Ensuite, votez pour éliminer quelqu'un.</p>
+      <ol id="order-list" class="order"></ol>
+    </div>
+    <h3 class="center">Qui éliminer ?</h3>
+    <div id="vote-grid" class="grid"></div>
+    <button id="peek-btn" class="btn ghost">🔁 Revoir mon mot</button>
+    <button id="quit-btn" class="btn ghost danger">Abandonner la partie</button>
+  </section>
+
+  <!-- FIN -->
+  <section id="screen-end" class="screen">
+    <header class="hero">
+      <h1 id="end-title"></h1>
+      <p class="sub" id="end-sub"></p>
+    </header>
+    <div class="card words-reveal">
+      <div><small>Mot des civils</small><strong id="end-civil"></strong></div>
+      <div><small>Mot des infiltrés</small><strong id="end-infiltre"></strong></div>
+    </div>
+    <div class="card">
+      <h2>Rôles</h2>
+      <ul id="end-roles" class="roles"></ul>
+    </div>
+    <button id="replay-btn" class="btn big">🔄 Rejouer</button>
+    <button id="home-btn" class="btn ghost">⚙️ Modifier les réglages</button>
+    <button id="scores-btn-2" class="btn ghost">🏆 Scores</button>
+  </section>
+</main>
+
+<!-- MODALE -->
+<div id="modal" class="modal" hidden>
+  <div class="modal-box">
+    <div id="modal-content"></div>
+    <div id="modal-actions" class="modal-actions"></div>
+  </div>
+</div>
+
+<script src="words.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
