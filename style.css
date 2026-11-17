@@ -73,3 +73,30 @@ input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transpar
 .big-emoji{font-size:3.5rem;text-align:center;margin:0}
 .rules p,.rules li{color:#d8d3ee;line-height:1.5}
 .role-summary{font-size:1.15rem;font-weight:700;margin:0 0 6px}
+.stack{display:flex;flex-direction:column;gap:14px}
+#online-setup{display:flex;flex-direction:column;gap:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);padding:5px;border-radius:14px;border:1px solid #ffffff10}
+.tab{border:0;background:transparent;color:var(--muted);padding:11px 6px;border-radius:10px;font-weight:600;font-size:.92rem;cursor:pointer}
+.tab.on{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.code-input{text-transform:uppercase;letter-spacing:.3em;font-weight:800;text-align:center;font-size:1.2rem}
+.room-code{font-size:2.6rem;font-weight:800;letter-spacing:.25em;text-align:center;margin:4px 0}
+.mini-word{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mini-word strong{font-size:1.3rem}
+.blur{filter:blur(9px);transition:filter .2s;cursor:pointer;user-select:none}
+.banner{border-radius:14px;padding:14px;text-align:center;font-weight:600;background:#8b5cf622;border:1px solid #8b5cf655}
+.banner.warn{background:#f59e0b22;border-color:#f59e0b55}
+.banner.good{background:#22c55e22;border-color:#22c55e55}
+.clues{list-style:none;padding:0;margin:0}
+.clues li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff10}
+.clues li:last-child{border:0}
+.clues .who{color:var(--muted)}
+.clues .now{color:var(--warn)}
+.clue-round{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 2px}
+.vote.mine{border-color:var(--accent);background:#8b5cf633}
+.vote .check{font-size:.75rem;color:var(--good);display:block;margin-top:4px;font-weight:400}
+.players-online{list-style:none;padding:0;margin:0}
+.players-online li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff10}
+.players-online li:last-child{border:0}
+.link-btn{background:none;border:0;color:var(--muted);cursor:pointer;font-size:.85rem;text-decoration:underline}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--muted);border-top-color:transparent;border-radius:50%;animation:sp 1s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}

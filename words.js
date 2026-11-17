@@ -152,3 +152,6 @@ const CATEGORIES = {
     ["Karaoké raté","Danse ratée"],["Fond de teint","Autobronzant"],["Pyjama","Jogging"],["Facture","Impôts"],["Réveil","Alarme incendie"]
   ]
 };
+
+// Utilisé aussi par le serveur (mode en ligne).
+if (typeof module !== "undefined") module.exports = CATEGORIES;

@@ -19,6 +19,32 @@
       <p class="sub">Trouvez qui n'a pas le même mot que vous.</p>
     </header>
 
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-mode="local" role="tab">📱 Un seul téléphone</button>
+      <button class="tab" data-mode="online" role="tab">🌐 En ligne</button>
+    </div>
+
+    <div id="online-setup" hidden>
+      <div class="card">
+        <h2>Ton prénom</h2>
+        <input id="online-name" type="text" maxlength="20" placeholder="Prénom" autocomplete="off">
+      </div>
+      <div class="card">
+        <h2>➕ Créer une salle</h2>
+        <p class="muted">Tu deviens l'hôte. Partage le code ou le lien à tes amis : chacun joue sur son téléphone (3 à 12 joueurs). Tes mots perso (onglet « Un seul téléphone ») sont ajoutés au tirage.</p>
+        <button id="online-create" class="btn big">Créer une salle</button>
+      </div>
+      <div class="card">
+        <h2>🔑 Rejoindre une salle</h2>
+        <div class="row">
+          <input id="online-code" type="text" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters" class="code-input">
+          <button id="online-join" class="btn">Rejoindre</button>
+        </div>
+      </div>
+      <p id="online-error" class="error"></p>
+    </div>
+
+    <div id="local-setup" class="stack">
     <div class="card">
       <h2>Joueurs <span id="player-count" class="pill">0</span></h2>
       <form id="add-player-form" class="row">
@@ -48,8 +74,14 @@
 
     <p id="setup-error" class="error"></p>
     <button id="start-btn" class="btn big">Lancer la partie</button>
-    <button id="rules-btn" class="btn ghost">📖 Règles du jeu</button>
     <button id="scores-btn" class="btn ghost">🏆 Scores</button>
+    </div>
+    <button id="rules-btn" class="btn ghost">📖 Règles du jeu</button>
+  </section>
+
+  <!-- PARTIE EN LIGNE -->
+  <section id="screen-online" class="screen">
+    <div id="online-root" class="stack"></div>
   </section>
 
   <!-- DISTRIBUTION DES MOTS -->
@@ -116,5 +148,6 @@
 
 <script src="words.js"></script>
 <script src="app.js"></script>
+<script src="online.js"></script>
 </body>
 </html>
